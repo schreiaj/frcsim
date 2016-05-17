@@ -1,6 +1,7 @@
 package frcsim
 
 import (
+	"bytes"
 	"encoding/csv"
 	"fmt"
 	"os"
@@ -36,12 +37,11 @@ type Event struct {
 }
 
 func (e *Event) BuildSchedule(matches int) {
-	file, err := os.Open(fmt.Sprintf("%s/%d_%d.csv", "schedules", len(e.Teams), matches))
+	file, err := Asset(fmt.Sprintf("%s/%d_%d.csv", "schedules", len(e.Teams), matches))
 	if err != nil {
 		panic(fmt.Errorf("No schedule template exists for %d teams and %d matches", len(e.Teams), matches))
 	}
-	defer file.Close()
-	reader := csv.NewReader(file)
+	reader := csv.NewReader(bytes.NewReader(file))
 	csvLines, err := reader.ReadAll()
 	e.Schedule = []Match{}
 	for match := 0; match < len(csvLines); match++ {
